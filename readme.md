@@ -1,4 +1,4 @@
-#Backend
+# Backend
 
 
 python venv venv
@@ -16,7 +16,7 @@ flask run --reload
 
 
 
-#Frontend
+# Frontend
 
 npm run dev
 
