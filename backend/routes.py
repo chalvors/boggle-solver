@@ -1,6 +1,8 @@
 from app import app, db
 from flask import request, jsonify
 from models import Friend
+import cv2
+import numpy as np
 
 
 # get all friends
@@ -24,14 +26,17 @@ def solve():
 
     try:
 
-        data = request.json
-        board = data["board"]
+        file = request.files['image']
+        file_bytes = np.fromfile(file, np.uint8)
+        image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-        print("SOLVE HERE")
+        cv2.imshow('img', image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         # solve board and return list of words
 
-        return jsonify("received:", board)
+        return jsonify("received")
     
     except Exception as e:
-        return jsonify("error:", str(e))
+        return jsonify(str(e))
