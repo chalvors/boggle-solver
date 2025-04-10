@@ -34,4 +34,4 @@ def solve():
         return jsonify("received:", board)
     
     except Exception as e:
-        return jsonify({"error:", str(e)})
+        return jsonify("error:", str(e))
