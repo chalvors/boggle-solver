@@ -138,7 +138,7 @@ function App() {
             style={{display: 'none'}}
           />
 
-          <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Manually Enter</BoardButton>
+          <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Enter Manually </BoardButton>
           
           { 
             file &&
