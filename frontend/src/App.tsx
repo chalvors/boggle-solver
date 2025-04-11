@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import styled from "styled-components";
 import { Spinner } from "react-spinner-toolkit";
 
@@ -12,6 +12,26 @@ function App() {
   const [file, setFile] = useState<File | null>(null);
   const [words, setWords] = useState<String[] | null>(null);
   const [board, setBoard] = useState<String[][] | null>(null);
+
+  const getNumErrors = useCallback(() => {
+    
+    if (board) {
+      let errors = 0;
+
+      for (const row of board) {
+        for (const char of row) {
+          if (char === '') {
+            errors += 1;
+          }
+        }
+      }
+      return errors
+    }
+    return undefined
+
+  }, [board]);
+
+  const boardHasErrors = (Number(getNumErrors()) > 0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -43,7 +63,6 @@ function App() {
         setBoard(data["board"]);
         setLoadingBoard(false);
         
-
       } catch (error) {
         console.error(error);
       }
@@ -72,7 +91,6 @@ function App() {
     } catch (error) {
       console.error(error);
     }
-
   }
 
   const handleEdit = () => {
@@ -135,7 +153,7 @@ function App() {
                   return (
                     row.map((char, index) => {
                       return (
-                        <Cell key={index}>{char}</Cell>
+                        <Cell key={index} errorCell={char === ''}>{char}</Cell>
                       )
                     })
                   )
@@ -143,8 +161,10 @@ function App() {
               }
             </GridContainer>
 
+            {boardHasErrors && <p>could not read {getNumErrors()} cells</p>}
+
             <Buttons>
-              <BoardButton onClick={handleSolve} disabled={loadingWords}>Solve</BoardButton>
+              <BoardButton onClick={handleSolve} disabled={loadingWords || boardHasErrors}>Solve</BoardButton>
               <BoardButton onClick={handleEdit} disabled={loadingWords}>Edit</BoardButton>
               <BoardButton onClick={handleClear} disabled={loadingWords}>Clear</BoardButton>
             </Buttons>
@@ -210,8 +230,8 @@ const GridContainer = styled.div`
   margin: 20px;
 `;
 
-const Cell = styled.div`
-  background-color: white;
+const Cell = styled.div<{errorCell: boolean}>`
+  background-color: ${props => props.errorCell ? 'violet' : 'white'};
   border: 1px solid black;
   padding: 10px;
   font-size: 30px;
