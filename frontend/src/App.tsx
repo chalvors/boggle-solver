@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import styled from "styled-components";
 
 export const BASE_URL = "http://localhost:5000/api";
+export const BOARD_SIZE = 4;
 
 function App() {
 
@@ -76,8 +78,29 @@ function App() {
     console.log('edit board')
   }
 
+  const handleClear = () => {
+    if (!loadingWords) {
+      setBoard(null);
+      setWords(null);
+    }
+  }
+
   const renderBoard = () => {
-    if (loadingBoard) {
+
+    if (!loadingBoard && !board) {
+      return (
+        <div>
+          <input 
+            type="file" 
+            name="image" 
+            onChange={handleFileChange} 
+          />
+          <button onClick={handleUpload}>upload</button>
+        </div>
+      )
+    }
+
+    if (loadingBoard && !board) {
       return (
         <p>Detecting Board</p>
       )
@@ -86,17 +109,25 @@ function App() {
     if (board) {
       return (
         <div>
-            <p>Board Found:</p>
-            {
-              board.map((row) => {
-                return (
-                  <p key={row.toString()}>{row}</p>
-                )
-              })
-            }
+            <GridContainer>
+              {
+                board.map((row) => {
+                  return (
+                    row.map((char, index) => {
+                      return (
+                        <Cell key={index}>{char}</Cell>
+                      )
+                    })
+                  )
+                })
+              }
+            </GridContainer>
 
-            <button onClick={handleSolve}>Solve Board</button>
-            <button onClick={handleEdit}>Edit Board</button>
+            <Buttons>
+              <BoardButton onClick={handleSolve} disabled={loadingWords}>Solve</BoardButton>
+              <BoardButton onClick={handleEdit} disabled={loadingWords}>Edit</BoardButton>
+              <BoardButton onClick={handleClear} disabled={loadingWords}>Clear</BoardButton>
+            </Buttons>
         </div>   
       )
     }
@@ -113,33 +144,73 @@ function App() {
 
       if (words) {
         return (
-          <div>
-              <p>Words Found:</p>
-              <ul>
-              {
-                words.map((word) => {
-                  return (
-                    <p key={word.toString()}>{word}</p>
-                  )
-                })
-              }
-              </ul>
-          </div>   
+          <WordListContainer>
+            {
+              words.map((word) => {
+                return (
+                  <Word key={word.toString()}>{word}</Word>
+                )
+              })
+            }
+          </WordListContainer>
         )
       }
     }
   }
 
   return (
-    <div style={{marginTop: '40px'}}>
-      <input type="file" name="image" onChange={handleFileChange}></input>
-      <button onClick={handleUpload}>upload</button>
-
+    <AppContainer>
       {renderBoard()}
       {renderWords()}
-
-    </div>
+    </AppContainer>
   )
 }
 
 export default App
+
+const AppContainer = styled.div`
+  margin-top: 40px;
+  text-align: center;
+`;
+
+const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(${BOARD_SIZE}, auto);
+  background-color: black;
+  padding: 10px;
+  margin: 20px;
+`;
+
+const Cell = styled.div`
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+  font-size: 30px;
+  text-align: center;
+`;
+
+const Buttons = styled.div`
+  margin: 20px;
+  text-align: center;
+`;
+
+const BoardButton = styled.button`
+  background-color: white;
+  margin: 10px;
+  width: 100px;
+  height: 33px;
+  &:active{
+    background-color: lightgray;
+    outline: none;
+    box-shadow: none;
+  }
+`;
+
+const WordListContainer = styled.div`
+  height: 45vh;
+  overflow-y: auto;
+`;
+
+const Word = styled.p`
+  font-size: 24px;
+`;
