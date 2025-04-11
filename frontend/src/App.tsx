@@ -81,6 +81,7 @@ function App() {
 
   const handleClear = () => {
     if (!loadingWords) {
+      setFile(null);
       setBoard(null);
       setWords(null);
     }
@@ -91,12 +92,21 @@ function App() {
     if (!loadingBoard && !board) {
       return (
         <div>
-          <input 
-            type="file" 
-            name="image" 
-            onChange={handleFileChange} 
-          />
-          <button onClick={handleUpload}>upload</button>
+          <FileSelectorButton htmlFor="file-upload">
+            Take Photo
+          </FileSelectorButton>
+            <input 
+              id='file-upload'
+              type='file'
+              name='image'
+              onChange={handleFileChange} 
+              style={{display: 'none'}}
+            />
+            
+            { file && <div>
+              <p>{file.name}</p>
+              <BoardButton onClick={handleUpload}>Upload</BoardButton>
+              </div>}
         </div>
       )
     }
@@ -240,4 +250,16 @@ const LoadingDiv = styled.div`
 
 const LoadingHeader = styled.p`
   margin-bottom: 30px;
+`;
+
+const FileSelectorButton = styled.label`
+  border: 2px solid black;
+  background-color: white;
+  margin: 10px;
+  width: 100px;
+  height: 33px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
 `;
