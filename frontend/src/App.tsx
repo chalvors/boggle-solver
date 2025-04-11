@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
+import { Spinner } from "react-spinner-toolkit";
 
 export const BASE_URL = "http://localhost:5000/api";
 export const BOARD_SIZE = 4;
@@ -102,7 +103,16 @@ function App() {
 
     if (loadingBoard && !board) {
       return (
-        <p>Detecting Board</p>
+        <LoadingDiv>
+          <LoadingHeader>Detecting Board</LoadingHeader>
+          <Spinner 
+            size={60}
+            color="#007aff"
+            loading={loadingBoard}
+            animationType="spin"
+            shape="circle"
+          />
+        </LoadingDiv>
       )
     }
 
@@ -138,7 +148,16 @@ function App() {
 
       if (loadingWords) {
         return (
-          <p>Finding Words</p>
+          <LoadingDiv>
+            <LoadingHeader>Finding Words</LoadingHeader>
+            <Spinner 
+              size={60}
+              color="#007aff"
+              loading={loadingWords}
+              animationType="spin"
+              shape="circle"
+            />
+          </LoadingDiv>
         )
       }
 
@@ -213,4 +232,12 @@ const WordListContainer = styled.div`
 
 const Word = styled.p`
   font-size: 24px;
+`;
+
+const LoadingDiv = styled.div`
+  justify-items: center;
+`;
+
+const LoadingHeader = styled.p`
+  margin-bottom: 30px;
 `;
