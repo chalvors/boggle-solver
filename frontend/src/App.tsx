@@ -162,6 +162,7 @@ function App() {
             </GridContainer>
 
             {boardHasErrors && <p>could not read {getNumErrors()} cells</p>}
+            {getNumErrors() === 16 && <p>please take another picture</p>}
 
             <Buttons>
               <BoardButton onClick={handleSolve} disabled={loadingWords || boardHasErrors}>Solve</BoardButton>
