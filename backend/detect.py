@@ -143,7 +143,7 @@ def replaceErrors():
     for index, letter in enumerate(letters):
 
         if letter == '':
-            letters[index] = ''
+            letters[index] = '?'
         elif letter == '3':
             letters[index] = 'E'
         elif letter == '5':

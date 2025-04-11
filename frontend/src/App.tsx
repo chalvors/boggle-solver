@@ -20,7 +20,7 @@ function App() {
 
       for (const row of board) {
         for (const char of row) {
-          if (char === '') {
+          if (char === '?') {
             errors += 1;
           }
         }
@@ -93,10 +93,6 @@ function App() {
     }
   }
 
-  const handleEdit = () => {
-    console.log('edit board')
-  }
-
   const handleClear = () => {
     if (!loadingWords) {
       setFile(null);
@@ -153,7 +149,7 @@ function App() {
                   return (
                     row.map((char, index) => {
                       return (
-                        <Cell key={index} errorCell={char === ''}>{char}</Cell>
+                        <Cell key={index} errorCell={char === '?'}>{char}</Cell>
                       )
                     })
                   )
@@ -166,7 +162,6 @@ function App() {
 
             <Buttons>
               <BoardButton onClick={handleSolve} disabled={loadingWords || boardHasErrors}>Solve</BoardButton>
-              <BoardButton onClick={handleEdit} disabled={loadingWords}>Edit</BoardButton>
               <BoardButton onClick={handleClear} disabled={loadingWords}>Clear</BoardButton>
             </Buttons>
         </div>   
@@ -232,7 +227,7 @@ const GridContainer = styled.div`
 `;
 
 const Cell = styled.div<{errorCell: boolean}>`
-  background-color: ${props => props.errorCell ? 'violet' : 'white'};
+  background-color: ${props => props.errorCell ? '#9966cc' : 'white'};
   border: 1px solid black;
   padding: 10px;
   font-size: 30px;
