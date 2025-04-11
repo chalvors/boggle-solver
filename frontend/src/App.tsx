@@ -12,6 +12,7 @@ function App() {
   const [file, setFile] = useState<File | null>(null);
   const [words, setWords] = useState<String[] | null>(null);
   const [board, setBoard] = useState<String[][] | null>(null);
+  const [enteringManually, setEnteringManually] = useState(false);
 
   const getNumErrors = useCallback(() => {
     
@@ -36,6 +37,9 @@ function App() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     if (e.target.files) {
+
+      setEnteringManually(false);
+
       setFile(e.target.files[0]);
     }
   }
@@ -105,6 +109,19 @@ function App() {
     return file.type.includes('image');
   }
 
+  const handleManualEnter = () => {
+
+    const newBoard = [
+      ['?', '?', '?', '?'],
+      ['?', '?', '?', '?'],
+      ['?', '?', '?', '?'],
+      ['?', '?', '?', '?']
+    ]
+
+    setBoard(newBoard);
+    setEnteringManually(true);
+  }
+
   const renderBoard = () => {
 
     if (!loadingBoard && !board) {
@@ -113,21 +130,24 @@ function App() {
           <FileSelectorButton htmlFor="file-upload">
             Take Photo
           </FileSelectorButton>
-            <input 
-              id='file-upload'
-              type='file'
-              name='image'
-              onChange={handleFileChange} 
-              style={{display: 'none'}}
-            />
-            
-            { 
-              file &&
-                <div>
-                  <p>{file.name}</p>
-                  {fileIsImage(file) ? <BoardButton onClick={handleUpload}>Upload</BoardButton> : <p>please select an image file</p>}
-                </div>
-            }
+          <input 
+            id='file-upload'
+            type='file'
+            name='image'
+            onChange={handleFileChange} 
+            style={{display: 'none'}}
+          />
+
+          <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Manually Enter</BoardButton>
+          
+          { 
+            file &&
+              <div>
+                <p>{file.name}</p>
+                {fileIsImage(file) ? <BoardButton onClick={handleUpload}>Upload</BoardButton> : <p>please select an image file</p>}
+              </div>
+          }
+          
         </div>
       )
     }
@@ -164,8 +184,8 @@ function App() {
               }
             </GridContainer>
 
-            {boardHasErrors && <p>could not read {getNumErrors()} cells</p>}
-            {getNumErrors() === 16 ? <p>please take another picture</p> : <p>please edit any missing or incorrect cells</p>}
+            {boardHasErrors && !enteringManually && <p>could not read {getNumErrors()} cells</p>}
+            {getNumErrors() === 16 && !enteringManually ? <p>please take another picture</p> : <p>please edit any missing or incorrect cells</p>}
 
             <Buttons>
               <BoardButton onClick={handleSolve} disabled={loadingWords || boardHasErrors}>Solve</BoardButton>
