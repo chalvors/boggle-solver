@@ -12,6 +12,8 @@ set FLASK_APP=app.py
 set FLASK_ENV=development
 
 
+venv/scripts/activate
+
 flask run --reload
 
 
