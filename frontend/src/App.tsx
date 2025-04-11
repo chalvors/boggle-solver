@@ -101,6 +101,10 @@ function App() {
     }
   }
 
+  function fileIsImage(file: File) {
+    return file.type.includes('image');
+  }
+
   const renderBoard = () => {
 
     if (!loadingBoard && !board) {
@@ -117,10 +121,13 @@ function App() {
               style={{display: 'none'}}
             />
             
-            { file && <div>
-              <p>{file.name}</p>
-              <BoardButton onClick={handleUpload}>Upload</BoardButton>
-              </div>}
+            { 
+              file &&
+                <div>
+                  <p>{file.name}</p>
+                  {fileIsImage(file) ? <BoardButton onClick={handleUpload}>Upload</BoardButton> : <p>please select an image file</p>}
+                </div>
+            }
         </div>
       )
     }
