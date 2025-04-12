@@ -203,6 +203,10 @@ function App() {
     }
   }
 
+  const handleModalInputFocus = (e: BaseSyntheticEvent) => {
+    e.target.select();
+  }
+
   const renderBoard = () => {
 
     if (!loadingBoard && !board) {
@@ -284,6 +288,7 @@ function App() {
                   <input
                     defaultValue={modalInfo.value}
                     autoFocus={true}
+                    onFocus={handleModalInputFocus}
                     onKeyDown={(e)=>{handleModalInputKeyDown(e)}}
                     ref={modalInputRef}
                   />
