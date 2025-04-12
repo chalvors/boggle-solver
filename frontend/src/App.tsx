@@ -257,7 +257,7 @@ function App() {
                   return (
                     row.map((char, j) => {
                       return (
-                        <Cell key={j} errorCell={char === '?'} onClick={(e)=>{handleCellClick(e, i, j)}}>{char}</Cell>
+                        <Cell key={j} $error={char === '?'} onClick={(e)=>{handleCellClick(e, i, j)}}>{char}</Cell>
                       )
                     })
                   )
@@ -354,8 +354,8 @@ const GridContainer = styled.div`
   margin: 20px;
 `;
 
-const Cell = styled.div<{errorCell: boolean}>`
-  background-color: ${props => props.errorCell ? '#9966cc' : 'white'};
+const Cell = styled.div<{ $error?: boolean; }>`
+  background-color: ${props => props.$error ? '#9966cc' : 'white'};
   border: 1px solid black;
   padding: 10px;
   font-size: 30px;
