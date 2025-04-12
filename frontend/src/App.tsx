@@ -146,7 +146,7 @@ function App() {
 
     if (newBoard && newValue) {
 
-      newBoard[modalInfo.xCord][modalInfo.yCord] = newValue;
+      newBoard[modalInfo.xCord][modalInfo.yCord] = newValue.toUpperCase();
 
       setBoard(newBoard);
 
@@ -427,6 +427,7 @@ const ModalDiv = styled.div`
 
 
 //TODO
-//safety guard for editing cells
+// auto select modal input text
+// guard for editing cells
 //  - make sure caps
 //  - only 1 letter or 'QU'
