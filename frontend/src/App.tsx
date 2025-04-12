@@ -185,13 +185,18 @@ function App() {
   const renderTakeAnotherPicture = () => {
     if (Number(getNumErrors()) === 16 && !enteringManually) {
       return (
-        <p>please take another picture</p>
+        <>
+          <p>please take another picture</p>
+          <p>make sure the image is clear and the board is centered</p>
+        </>
       )
     }
   }
 
   const renderPleaseEdit = () => {
-    if (Number(getNumErrors()) > 0 && Number(getNumErrors()) < 16) {
+    if (Number(getNumErrors()) > 0 && Number(getNumErrors()) < 16 ||
+        Number(getNumErrors()) > 0 && enteringManually
+    ) {
       return (
         <p>please edit any missing or incorrect cells</p>
       )
