@@ -1,9 +1,17 @@
-import { useState, useCallback } from "react";
-import styled from "styled-components";
-import { Spinner } from "react-spinner-toolkit";
+import { useState, useCallback, BaseSyntheticEvent, useRef } from 'react';
+import styled from 'styled-components';
+import { Spinner } from 'react-spinner-toolkit';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 
 export const BASE_URL = "http://localhost:5000/api";
 export const BOARD_SIZE = 4;
+
+export interface ModalProps {
+  value: string,
+  xCord: number,
+  yCord: number
+}
 
 function App() {
 
@@ -13,6 +21,10 @@ function App() {
   const [words, setWords] = useState<String[] | null>(null);
   const [board, setBoard] = useState<String[][] | null>(null);
   const [enteringManually, setEnteringManually] = useState(false);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [modalInfo, setModalInfo] = useState<ModalProps>({value: '', xCord: -1, yCord: -1});
+  const modalInputRef = useRef<HTMLInputElement>(null);
 
   const getNumErrors = useCallback(() => {
     
@@ -32,7 +44,11 @@ function App() {
 
   }, [board]);
 
-  const boardHasErrors = (Number(getNumErrors()) > 0);
+  const boardHasErrors = useCallback(() => {
+
+    return Number(getNumErrors()) > 0;
+
+  }, [getNumErrors]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -122,6 +138,66 @@ function App() {
     setEnteringManually(true);
   }
 
+  const handleCloseModal = () => {
+
+    const newValue = modalInputRef.current?.value;
+
+    const newBoard = board;
+
+    if (newBoard && newValue) {
+
+      newBoard[modalInfo.xCord][modalInfo.yCord] = newValue;
+
+      setBoard(newBoard);
+
+      setOpenModal(false);
+    }
+  }
+
+  const handleCellClick = (e: BaseSyntheticEvent, i: number, j: number) => {
+
+    const value = e.target.innerHTML;
+
+    const props: ModalProps = {
+      value: value,
+      xCord: i,
+      yCord: j
+    }
+
+    setModalInfo(props);
+    setOpenModal(true);
+  }
+
+  const handleModalInputKeyDown = (e: any) => {
+    if (e.code === 'Enter') {
+      handleCloseModal();
+    }
+  }
+
+  const renderNumErrorCells = () => {
+    if (boardHasErrors() && !enteringManually) {
+      return (
+        <p>could not read {getNumErrors()} cells</p>
+      )
+    }
+  }
+
+  const renderTakeAnotherPicture = () => {
+    if (Number(getNumErrors()) === 16 && !enteringManually) {
+      return (
+        <p>please take another picture</p>
+      )
+    }
+  }
+
+  const renderPleaseEdit = () => {
+    if (Number(getNumErrors()) > 0 && Number(getNumErrors()) < 16 || enteringManually) {
+      return (
+      <p>please edit any missing or incorrect cells</p>
+      )
+    }
+  }
+
   const renderBoard = () => {
 
     if (!loadingBoard && !board) {
@@ -138,7 +214,7 @@ function App() {
             style={{display: 'none'}}
           />
 
-          <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Enter Manually </BoardButton>
+          <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Enter Manually</BoardButton>
           
           { 
             file &&
@@ -172,11 +248,11 @@ function App() {
         <div>
             <GridContainer>
               {
-                board.map((row) => {
+                board.map((row, i) => {
                   return (
-                    row.map((char, index) => {
+                    row.map((char, j) => {
                       return (
-                        <Cell key={index} errorCell={char === '?'}>{char}</Cell>
+                        <Cell key={j} errorCell={char === '?'} onClick={(e)=>{handleCellClick(e, i, j)}}>{char}</Cell>
                       )
                     })
                   )
@@ -184,13 +260,33 @@ function App() {
               }
             </GridContainer>
 
-            {boardHasErrors && !enteringManually && <p>could not read {getNumErrors()} cells</p>}
-            {getNumErrors() === 16 && !enteringManually ? <p>please take another picture</p> : <p>please edit any missing or incorrect cells</p>}
+            {renderNumErrorCells()}
+            {renderTakeAnotherPicture()}
+            {renderPleaseEdit()}
 
             <Buttons>
-              <BoardButton onClick={handleSolve} disabled={loadingWords || boardHasErrors}>Solve</BoardButton>
+              <BoardButton onClick={handleSolve} disabled={loadingWords || boardHasErrors()}>Solve</BoardButton>
               <BoardButton onClick={handleClear} disabled={loadingWords}>Clear</BoardButton>
             </Buttons>
+
+            <Modal
+              open={openModal}
+              onClose={handleCloseModal}
+            >
+              <Box sx={modalStyle}>
+                <ModalDiv>
+                  <h1>{`Edit Cell (${modalInfo.xCord},${modalInfo.yCord})`}</h1>
+                  <input
+                    defaultValue={modalInfo.value}
+                    autoFocus={true}
+                    onKeyDown={(e)=>{handleModalInputKeyDown(e)}}
+                    ref={modalInputRef}
+                  />
+                  <BoardButton onClick={handleCloseModal}>OK</BoardButton>
+                </ModalDiv>
+              </Box>
+            </Modal>
+
         </div>   
       )
     }
@@ -305,4 +401,20 @@ const FileSelectorButton = styled.label`
   padding-bottom: 10px;
   padding-left: 12px;
   padding-right: 12px;
+`;
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 200,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+const ModalDiv = styled.div`
+  text-align: center;
 `;
