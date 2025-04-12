@@ -432,7 +432,6 @@ const ModalDiv = styled.div`
 
 
 //TODO
-// auto select modal input text
 // guard for editing cells
-//  - make sure caps
+//  - force caps in input?
 //  - only 1 letter or 'QU'
