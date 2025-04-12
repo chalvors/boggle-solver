@@ -191,9 +191,9 @@ function App() {
   }
 
   const renderPleaseEdit = () => {
-    if (Number(getNumErrors()) > 0 && Number(getNumErrors()) < 16 || enteringManually) {
+    if (Number(getNumErrors()) > 0 && Number(getNumErrors()) < 16) {
       return (
-      <p>please edit any missing or incorrect cells</p>
+        <p>please edit any missing or incorrect cells</p>
       )
     }
   }
@@ -418,3 +418,10 @@ const modalStyle = {
 const ModalDiv = styled.div`
   text-align: center;
 `;
+
+
+
+//TODO
+//safety guard for editing cells
+//  - make sure caps
+//  - only 1 letter or 'QU'
