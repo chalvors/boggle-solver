@@ -206,26 +206,6 @@ function App() {
 
   const renderBoard = () => {
 
-    if (!loadingBoard && !board) {
-      return (
-        <div>
-          <FileSelectorButton htmlFor="file-upload">
-            Take Photo
-          </FileSelectorButton>
-          <input 
-            id='file-upload'
-            type='file'
-            name='image'
-            onChange={handleFileChange} 
-            style={{display: 'none'}}
-          />
-
-          <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Enter Manually</BoardButton>
-          
-        </div>
-      )
-    }
-
     if (loadingBoard && !board) {
       return (
         <LoadingDiv>
@@ -325,8 +305,44 @@ function App() {
     }
   }
 
+  const handleTakePhotoClick = () => {
+    const input = document.getElementById('file-upload');
+
+    if(input) {
+      input.click();
+    }
+  }
+
+  const renderInitialButtons = () => {
+    if (!loadingBoard && !board) {
+      return (
+        <InitialButtonsDiv>
+          <div>
+            <InitialButton onClick={handleTakePhotoClick}>Take Photo</InitialButton>
+          </div>
+
+          <div>
+            <input 
+              id='file-upload'
+              type='file'
+              name='image'
+              onChange={handleFileChange} 
+              style={{display: 'none'}}
+            />
+          </div>
+
+          <div>
+            <InitialButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Enter Manually</InitialButton>
+          </div>
+          
+        </InitialButtonsDiv>
+      )
+    }
+  }
+
   return (
     <AppContainer>
+      {renderInitialButtons()}
       {renderBoard()}
       {renderWords()}
     </AppContainer>
@@ -338,6 +354,14 @@ export default App
 const AppContainer = styled.div`
   margin-top: 40px;
   text-align: center;
+`;
+
+const InitialButtonsDiv = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-bottom: 80px;
 `;
 
 const GridContainer = styled.div`
@@ -390,18 +414,6 @@ const LoadingHeader = styled.p`
   margin-bottom: 30px;
 `;
 
-const FileSelectorButton = styled.label`
-  border: 2px solid black;
-  background-color: white;
-  margin: 10px;
-  width: 100px;
-  height: 33px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 12px;
-  padding-right: 12px;
-`;
-
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -418,6 +430,11 @@ const ModalDiv = styled.div`
   text-align: center;
 `;
 
+const InitialButton = styled.button`
+  width: 80%;
+  height: 60px;
+  margin: 12px;
+`;
 
 
 //TODO
