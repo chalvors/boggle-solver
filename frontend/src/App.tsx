@@ -9,6 +9,10 @@ export const BOARD_SIZE = 4;
 
 export interface ModalProps {
   value: string,
+  cellPos: CellPos
+}
+
+export interface CellPos {
   xCord: number,
   yCord: number
 }
@@ -20,9 +24,10 @@ function App() {
   const [words, setWords] = useState<String[] | null>(null);
   const [board, setBoard] = useState<String[][] | null>(null);
   const [enteringManually, setEnteringManually] = useState(false);
+  const [editedCells, setEditedCells] = useState<CellPos[]>([]);
 
   const [openModal, setOpenModal] = useState(false);
-  const [modalInfo, setModalInfo] = useState<ModalProps>({value: '', xCord: -1, yCord: -1});
+  const [modalInfo, setModalInfo] = useState<ModalProps>({value: '', cellPos: {xCord: -1, yCord: -1}});
   const modalInputRef = useRef<HTMLInputElement>(null);
 
   function fileIsImage(file: File) {
@@ -117,6 +122,7 @@ function App() {
 
   const handleClear = () => {
     if (!loadingWords) {
+      setEditedCells([]);
       setBoard(null);
       setWords(null);
     }
@@ -139,13 +145,24 @@ function App() {
 
     const newValue = modalInputRef.current?.value;
 
-    const newBoard = board;
+    let newBoard = board;
 
     if (newBoard && newValue) {
 
-      newBoard[modalInfo.xCord][modalInfo.yCord] = newValue.toUpperCase();
+      newBoard[modalInfo.cellPos.xCord][modalInfo.cellPos.yCord] = newValue.toUpperCase();
 
       setBoard(newBoard);
+
+      const cellPos: CellPos = {
+        xCord: modalInfo.cellPos.xCord,
+        yCord:  modalInfo.cellPos.yCord
+      }
+      let newEditedCells = editedCells;
+
+      if (!newEditedCells.some(cell => cell.xCord === cellPos.xCord && cell.yCord === cellPos.yCord)) {
+        newEditedCells.push(cellPos);
+        setEditedCells(newEditedCells);
+      }
 
       setOpenModal(false);
     }
@@ -157,8 +174,10 @@ function App() {
 
     const props: ModalProps = {
       value: value,
-      xCord: i,
-      yCord: j
+      cellPos: {
+        xCord: i,
+        yCord: j
+      }
     }
 
     setModalInfo(props);
@@ -222,6 +241,7 @@ function App() {
     }
 
     if (board) {
+
       return (
         <div>
             <GridContainer>
@@ -229,8 +249,11 @@ function App() {
                 board.map((row, i) => {
                   return (
                     row.map((char, j) => {
+
+                      const cellHasBeenEdited = editedCells.some(cell => cell.xCord === i && cell.yCord === j);
+
                       return (
-                        <Cell key={j} $error={char === '?'} onClick={(e)=>{handleCellClick(e, i, j)}}>{char}</Cell>
+                        <Cell key={j} $error={char === '?'} $edited={cellHasBeenEdited} onClick={(e)=>{handleCellClick(e, i, j)}}>{char}</Cell>
                       )
                     })
                   )
@@ -253,7 +276,7 @@ function App() {
             >
               <Box sx={modalStyle}>
                 <ModalDiv>
-                  <h1>{`Edit Cell (${modalInfo.xCord},${modalInfo.yCord})`}</h1>
+                  <h1>{`Edit Cell (${modalInfo.cellPos.xCord},${modalInfo.cellPos.yCord})`}</h1>
                   <input
                     defaultValue={modalInfo.value}
                     autoFocus={true}
@@ -352,7 +375,8 @@ function App() {
 export default App
 
 const AppContainer = styled.div`
-  margin-top: 40px;
+  width: 100%;
+  height: 100%;
   text-align: center;
 `;
 
@@ -361,7 +385,7 @@ const InitialButtonsDiv = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  padding-bottom: 80px;
+  padding-bottom: 60px;
 `;
 
 const GridContainer = styled.div`
@@ -372,8 +396,8 @@ const GridContainer = styled.div`
   margin: 20px;
 `;
 
-const Cell = styled.div<{ $error?: boolean; }>`
-  background-color: ${props => props.$error ? '#9966cc' : 'white'};
+const Cell = styled.div<{ $error?: boolean; $edited?: boolean}>`
+  background-color: ${props => props.$edited ? '#88da68' : props.$error ? '#da6868' : '#62ccec'};
   border: 1px solid black;
   padding: 10px;
   font-size: 30px;
@@ -390,6 +414,7 @@ const BoardButton = styled.button`
   margin: 10px;
   width: 100px;
   height: 33px;
+  text-align: center;
   &:active{
     background-color: lightgray;
     outline: none;
@@ -434,6 +459,16 @@ const InitialButton = styled.button`
   width: 80%;
   height: 60px;
   margin: 12px;
+  border-radius: 12px;
+  background-color: #42b6e4;
+  color: black;
+  font-family: Lexend;
+  font-size: 16px;
+  text-decoration: none;
+  text-align: center;
+  &:active{
+    transform: translateY(4px);
+  }
 `;
 
 
