@@ -86,6 +86,8 @@ function App() {
           console.error(error);
         }
       }
+
+      console.error('ERROR file is not an image: "' + newFile.name + '" is of type "' + newFile.type + '"');
     }
   }
 
