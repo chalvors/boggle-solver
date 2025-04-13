@@ -154,6 +154,8 @@ def replaceErrors():
             letters[index] = 'O'
         elif letter == '4':
             letters[index] = 'A'
+        elif letter == '2':
+            letters[index] = 'Z'
 
 # Create board from letters
 def createBoard():
