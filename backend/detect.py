@@ -144,18 +144,26 @@ def replaceErrors():
 
         if letter == '':
             letters[index] = '?'
-        elif letter == '3':
-            letters[index] = 'E'
-        elif letter == '5':
-            letters[index] = 'S'
-        elif letter == '1':
-            letters[index] = 'I'
         elif letter == '0':
             letters[index] = 'O'
+        elif letter == '1':
+            letters[index] = 'I'
+        elif letter == '2':
+            letters[index] = 'Z'    
+        elif letter == '3':
+            letters[index] = 'E'
         elif letter == '4':
             letters[index] = 'A'
-        elif letter == '2':
-            letters[index] = 'Z'
+        elif letter == '5':
+            letters[index] = 'S'
+        elif letter == '6':
+            letters[index] = '?'
+        elif letter == '7':
+            letters[index] = '?'            
+        elif letter == '8':
+            letters[index] = '?'
+        elif letter == '9':
+            letters[index] = '?'
 
 # Create board from letters
 def createBoard():
