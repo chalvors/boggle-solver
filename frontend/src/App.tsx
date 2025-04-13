@@ -17,7 +17,6 @@ function App() {
 
   const [loadingBoard, setLoadingBoard] = useState(false);
   const [loadingWords, setLoadingWords] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
   const [words, setWords] = useState<String[] | null>(null);
   const [board, setBoard] = useState<String[][] | null>(null);
   const [enteringManually, setEnteringManually] = useState(false);
@@ -25,6 +24,10 @@ function App() {
   const [openModal, setOpenModal] = useState(false);
   const [modalInfo, setModalInfo] = useState<ModalProps>({value: '', xCord: -1, yCord: -1});
   const modalInputRef = useRef<HTMLInputElement>(null);
+
+  function fileIsImage(file: File) {
+    return file.type.includes('image');
+  }
 
   const getNumErrors = useCallback(() => {
     
@@ -50,41 +53,38 @@ function App() {
 
   }, [getNumErrors]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
     if (e.target.files) {
 
+      const newFile = e.target.files[0];
+
       setEnteringManually(false);
 
-      setFile(e.target.files[0]);
-    }
-  }
+      if (fileIsImage(newFile)) {
 
-  const handleUpload = async () => {
+        setBoard(null);
+        setWords(null);
 
-    setBoard(null);
-    setWords(null);
+        setLoadingBoard(true);
 
-    if (file && !loadingBoard && !loadingWords) {
+        const formData = new FormData();
+        formData.append('image', newFile);
 
-      setLoadingBoard(true);
+        try {
+          
+          const result = await fetch(BASE_URL + "/detect", {
+            method: "PUT",
+            body: formData,
+          });
 
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        
-        const result = await fetch(BASE_URL + "/detect", {
-          method: "PUT",
-          body: formData,
-        });
-
-        const data = await result.json();
-        setBoard(data["board"]);
-        setLoadingBoard(false);
-        
-      } catch (error) {
-        console.error(error);
+          const data = await result.json();
+          setBoard(data["board"]);
+          setLoadingBoard(false);
+          
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
   }
@@ -115,14 +115,9 @@ function App() {
 
   const handleClear = () => {
     if (!loadingWords) {
-      setFile(null);
       setBoard(null);
       setWords(null);
     }
-  }
-
-  function fileIsImage(file: File) {
-    return file.type.includes('image');
   }
 
   const handleManualEnter = () => {
@@ -224,14 +219,6 @@ function App() {
           />
 
           <BoardButton style={{marginTop: '30px'}} onClick={handleManualEnter}>Enter Manually</BoardButton>
-          
-          { 
-            file &&
-              <div>
-                <p>{file.name}</p>
-                {fileIsImage(file) ? <BoardButton onClick={handleUpload}>Upload</BoardButton> : <p>please select an image file</p>}
-              </div>
-          }
           
         </div>
       )
