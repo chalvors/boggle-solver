@@ -479,4 +479,6 @@ const InitialButton = styled.button`
 //TODO
 // guard for editing cells
 //  - force caps in input?
+//    - intercept on change and change input to caps
 //  - only 1 letter or 'QU'
+//  - keep cells the same size no matter the contents
