@@ -466,7 +466,6 @@ const InitialButton = styled.button`
   border-radius: 12px;
   background-color: #42b6e4;
   color: black;
-  font-family: Lexend;
   font-size: 16px;
   text-decoration: none;
   text-align: center;
