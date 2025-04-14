@@ -146,26 +146,29 @@ function App() {
 
     const newValue = modalInputRef.current?.value;
 
-    let newBoard = board;
+    if (newValue?.match('[A-Z]')) {
 
-    if (newBoard && newValue) {
+      let newBoard = board;
 
-      newBoard[modalInfo.cellPos.xCord][modalInfo.cellPos.yCord] = newValue.toUpperCase();
+      if (newBoard && newValue) {
 
-      setBoard(newBoard);
+        newBoard[modalInfo.cellPos.xCord][modalInfo.cellPos.yCord] = newValue.toUpperCase();
 
-      const cellPos: CellPos = {
-        xCord: modalInfo.cellPos.xCord,
-        yCord:  modalInfo.cellPos.yCord
+        setBoard(newBoard);
+
+        const cellPos: CellPos = {
+          xCord: modalInfo.cellPos.xCord,
+          yCord:  modalInfo.cellPos.yCord
+        }
+        let newEditedCells = editedCells;
+
+        if (!newEditedCells.some(cell => cell.xCord === cellPos.xCord && cell.yCord === cellPos.yCord)) {
+          newEditedCells.push(cellPos);
+          setEditedCells(newEditedCells);
+        }
+
+        setOpenModal(false);
       }
-      let newEditedCells = editedCells;
-
-      if (!newEditedCells.some(cell => cell.xCord === cellPos.xCord && cell.yCord === cellPos.yCord)) {
-        newEditedCells.push(cellPos);
-        setEditedCells(newEditedCells);
-      }
-
-      setOpenModal(false);
     }
   }
 
