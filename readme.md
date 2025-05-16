@@ -20,6 +20,10 @@ flask run --reload
 
 # Frontend
 
+
+npm install
+
+
 npm run dev
 
 npm run dev -- --host to see network

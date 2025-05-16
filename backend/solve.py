@@ -8,14 +8,13 @@
 #
 # Credit: 
 # - Geeks For Geeks Boggle Solver Tutorial
-# - Github user benjamincrom dictionary.json
+# - Github user benjamincrom word list
 ################################################
 
 import json
 
-dictionary = []
+dictionary = {}
 found = []
-n = 0
 
 # initialize dictionary from json file
 def initDictionary():
@@ -25,30 +24,8 @@ def initDictionary():
     f = open('./dictionary.json', 'r')
     data = json.load(f)
     f.close()
-
-    # remove all words less than 3 chars, capitalize
-    for word in data:  
-        if (len(word) > 2):
-            dictionary.append(word.upper())
     
-    return dictionary
-
-# Binary search algorithm to check a string against the dictionary
-def isWord(arr, low, high, Str):
-  
-    if high >= low:
-
-        mid = (high + low) // 2
-
-        if arr[mid] == Str:
-
-            return True
-        
-        elif arr[mid] > Str:
-            return isWord(arr, low, mid-1, Str)
-        
-        else:
-            return isWord(arr, mid+1, high, Str)
+    return data
 
 # A recursive function to find all words present on boggle
 def findWordsUtil(board, boardSize, visited, i, j, Str):
@@ -58,8 +35,11 @@ def findWordsUtil(board, boardSize, visited, i, j, Str):
     Str = Str + board[i][j]
     
     # If str is present in dictionary, add to found
-    if (isWord(dictionary, 0, n-1, Str)):
+    try:
+        dictionary[Str]
         found.append(Str)
+    except:
+        pass
     
     # Traverse 8 adjacent cells of boggle[i,j]
     row = i - 1
@@ -80,10 +60,8 @@ def findWords(board, boardSize):
 
     global found
     global dictionary
-    global n
 
     dictionary = initDictionary()
-    n = len(dictionary)
 
     print('')
     print('finding words')
