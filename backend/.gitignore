@@ -175,5 +175,3 @@ cython_debug/
 
 # Cole added
 ./venv
-*.pyc
-./__pycache__
