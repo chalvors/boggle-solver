@@ -34,12 +34,13 @@ def findWordsUtil(board, boardSize, visited, i, j, Str):
     visited[i][j] = True
     Str = Str + board[i][j]
     
-    # If str is present in dictionary, add to found
-    try:
-        dictionary[Str]
-        found.append(Str)
-    except:
-        pass
+    # If str is 3+ letters and is present in dictionary, add to found
+    if (len(Str) > 2):
+        try:
+            dictionary[Str]
+            found.append(Str)
+        except:
+            pass
     
     # Traverse 8 adjacent cells of boggle[i,j]
     row = i - 1
