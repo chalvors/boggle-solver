@@ -21,7 +21,7 @@ def detect_board():
         # detect board
         board = detect.detect_letters(image)
         board_size = len(board)
-        detect.printBoard(board, board_size)
+        detect.print_board(board, board_size)
 
         return jsonify({"board": board})
     
