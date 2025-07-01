@@ -13,19 +13,11 @@
 
 import json
 
-dictionary = {}
+f = open('./valid_words.json', 'r')
+valid_words = json.load(f)
+f.close()
+
 found = []
-
-# initialize dictionary from json file
-def init_dictionary():
-
-    global dictionary
-
-    f = open('./dictionary.json', 'r')
-    data = json.load(f)
-    f.close()
-    
-    return data
 
 # A recursive function to find all words present on boggle
 def find_words_util(board, board_size, visited, i, j, current_string):
@@ -37,7 +29,7 @@ def find_words_util(board, board_size, visited, i, j, current_string):
     # If str is 3+ letters and is present in dictionary, add to found
     if (len(current_string) > 2):
         try:
-            dictionary[current_string]
+            valid_words[current_string]
             found.append(current_string)
         except:
             pass
@@ -60,9 +52,6 @@ def find_words_util(board, board_size, visited, i, j, current_string):
 def find_words(board, board_size):
 
     global found
-    global dictionary
-
-    dictionary = init_dictionary()
 
     print('')
     print('Finding words')
