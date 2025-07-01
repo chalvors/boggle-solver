@@ -19,9 +19,9 @@ def detect_board():
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
         # detect board
-        board = detect.detectLetters(image)
-        boardSize = len(board)
-        detect.printBoard(board, boardSize)
+        board = detect.detect_letters(image)
+        board_size = len(board)
+        detect.printBoard(board, board_size)
 
         return jsonify({"board": board})
     
@@ -38,9 +38,9 @@ def solve_board():
     try:
 
         board = request.json
-        boardSize = len(board)
+        board_size = len(board)
 
-        words = solve.findWords(board, boardSize)
+        words = solve.find_words(board, board_size)
 
         return jsonify({"words": words})
     

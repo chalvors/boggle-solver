@@ -17,7 +17,7 @@ dictionary = {}
 found = []
 
 # initialize dictionary from json file
-def initDictionary():
+def init_dictionary():
 
     global dictionary
 
@@ -28,63 +28,63 @@ def initDictionary():
     return data
 
 # A recursive function to find all words present on boggle
-def findWordsUtil(board, boardSize, visited, i, j, Str):
+def find_words_util(board, board_size, visited, i, j, current_string):
 
     # Mark current cell as visited and append current character to str
     visited[i][j] = True
-    Str = Str + board[i][j]
+    current_string = current_string + board[i][j]
     
     # If str is 3+ letters and is present in dictionary, add to found
-    if (len(Str) > 2):
+    if (len(current_string) > 2):
         try:
-            dictionary[Str]
-            found.append(Str)
+            dictionary[current_string]
+            found.append(current_string)
         except:
             pass
     
     # Traverse 8 adjacent cells of boggle[i,j]
     row = i - 1
-    while row <= i + 1 and row < boardSize:
+    while row <= i + 1 and row < board_size:
         col = j - 1
-        while col <= j + 1 and col < boardSize:
+        while col <= j + 1 and col < board_size:
             if (row >= 0 and col >= 0 and not visited[row][col]):
-                findWordsUtil(board, boardSize, visited, row, col, Str)
+                find_words_util(board, board_size, visited, row, col, current_string)
             col+=1
         row+=1
     
     # Erase current character from string and mark visited of current cell as false
-    Str = "" + Str[-1]
+    current_string = "" + current_string[-1]
     visited[i][j] = False
 
 # Find all words present in dictionary.
-def findWords(board, boardSize):
+def find_words(board, board_size):
 
     global found
     global dictionary
 
-    dictionary = initDictionary()
+    dictionary = init_dictionary()
 
     print('')
-    print('finding words')
+    print('Finding words')
     print('')
   
     # Mark all characters as not visited
-    visited = [[False for i in range(boardSize)] for j in range(boardSize)]
+    visited = [[False for i in range(board_size)] for j in range(board_size)]
     
     # Initialize current string
     Str = ""
     
     # Consider every character and look for all words starting with this character
-    for i in range(boardSize):
-      for j in range(boardSize):
-        findWordsUtil(board, boardSize, visited, i, j, Str)
+    for i in range(board_size):
+      for j in range(board_size):
+        find_words_util(board, board_size, visited, i, j, Str)
 
 
     no_dupes = list(set(found))
     no_dupes.sort(key=len, reverse=True) 
 
-    numWords = str(len(no_dupes))
-    print('found ' + numWords + ' words')
+    num_words = str(len(no_dupes))
+    print('Found ' + num_words + ' words')
     print('')
 
     return no_dupes

@@ -19,9 +19,9 @@ letters = [None] * 16
 acc = [None] * 16
 errors = []
 
-def preprocessImage(image):
+def preprocess_image(image):
 
-    print('Processing Image')
+    print('Processing image')
 
     # Preprocess the image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -37,9 +37,9 @@ def preprocessImage(image):
 
 # Divide image into cells
 # TODO this is bad
-def divideImage(image):
+def divide_image(image):
 
-    print('Dividing Image')
+    print('Dividing image')
 
     cropped_height, cropped_width = image.shape
 
@@ -75,7 +75,7 @@ def divideImage(image):
     )
 
 # Find errors
-def updateErrors():
+def update_errors():
 
     global errors
     errors = []
@@ -87,7 +87,7 @@ def updateErrors():
             errors.append(index + 1)
 
 # Read cells 
-def readCells():
+def read_cells():
 
     global cells
     global letters
@@ -109,12 +109,12 @@ def readCells():
             letters[index] = ''
             acc[index] = 0
     
-    updateErrors()
+    update_errors()
 
 # Rotate error cells for future reading
-def rotateErrorCells():
+def rotate_error_cells():
 
-    print('rotating cells: ' + str(errors))
+    print('Rotating cells: ' + str(errors))
 
     global cells
 
@@ -125,18 +125,18 @@ def rotateErrorCells():
             if (index == error-1):
                 
                 # Rotate 90 clockwise
-                newCell = cv2.rotate(cell, cv2.ROTATE_90_CLOCKWISE)
+                new_cell = cv2.rotate(cell, cv2.ROTATE_90_CLOCKWISE)
 
             else:
-                newCell = cells[index]
+                new_cell = cells[index]
 
-            cells[index] = newCell
+            cells[index] = new_cell
 
 # Adjust errors
-def replaceErrors(): 
+def replace_errors(): 
 
     print('')
-    print('error on cells: ' + str(errors))
+    print('Error on cells: ' + str(errors))
 
     global letters
 
@@ -166,7 +166,7 @@ def replaceErrors():
             letters[index] = '?'
 
 # Create board from letters
-def createBoard():
+def create_board():
 
     global letters
 
@@ -184,7 +184,7 @@ def createBoard():
 
 
 # Print boggle board
-def printBoard(board, size):
+def print_board(board, size):
 
     print('')
     print('Detected ' + str(size) + 'x' + str(size) + ' board:')
@@ -197,33 +197,33 @@ def printBoard(board, size):
     
 
 # Get letters from image
-def detectLetters(image):
+def detect_letters(image):
 
     print('')
     print("Received image, detecting board")
     print('')
 
     # Process image
-    processedImage = preprocessImage(image)
+    processedImage = preprocess_image(image)
 
     # Divide image into cells
     global cells
-    cells = divideImage(processedImage)
+    cells = divide_image(processedImage)
 
     print('')
 
     # Read cells
-    readCells()
+    read_cells()
 
     # Rotate and read error cells 3 times
     for i in range(3):
 
-        rotateErrorCells()
-        readCells()
+        rotate_error_cells()
+        read_cells()
 
     # Replace error cells
-    replaceErrors()
+    replace_errors()
 
     # Create and return board
-    board = createBoard()
+    board = create_board()
     return board
