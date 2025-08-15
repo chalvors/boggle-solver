@@ -1,22 +1,21 @@
 ################################################
 # Cole Halvorson
-# CS455 Final Project
-# 11/22/2024
-#
 # detect.py
 # detect a boggle board in an image
 ################################################
 
 import cv2
 import easyocr
+import math
 
 # Make reader
 reader = easyocr.Reader(['en'])
 
 # Globals
-cells = [None] * 16
-letters = [None] * 16
-acc = [None] * 16
+board_cell_count = 16
+cells = [None] * board_cell_count
+letters = [None] * board_cell_count
+acc = [None] * board_cell_count
 errors = []
 
 def preprocess_image(image):
@@ -36,43 +35,31 @@ def preprocess_image(image):
     return cropped
 
 # Divide image into cells
-# TODO this is bad
 def divide_image(image):
 
     print('Dividing image')
 
-    cropped_height, cropped_width = image.shape
+    board_side_length = int(math.sqrt(board_cell_count))
+    _, cropped_width = image.shape
 
-    divide_size = int(cropped_width/4)
+    cell_size = int(cropped_width/board_side_length)
+    cells = []
 
-    cell_1 = image[0:divide_size, 0:divide_size]
-    cell_2 = image[0:divide_size, divide_size:divide_size*2]
-    cell_3 = image[0:divide_size, divide_size*2:divide_size*3]
-    cell_4 = image[0:divide_size, divide_size*3:divide_size*4]
+    # Rows
+    for i in range(board_side_length):
+        start_x = cell_size * i
+        end_x = cell_size * (i + 1)
 
-    cell_5 = image[divide_size:divide_size*2, 0:divide_size]
-    cell_6 = image[divide_size:divide_size*2, divide_size:divide_size*2]
-    cell_7 = image[divide_size:divide_size*2, divide_size*2:divide_size*3]
-    cell_8 = image[divide_size:divide_size*2, divide_size*3:divide_size*4]
+        # Cells in each row
+        for j in range(board_side_length):
 
-    cell_9 = image[divide_size*2:divide_size*3, 0:divide_size]
-    cell_10 = image[divide_size*2:divide_size*3, divide_size:divide_size*2]
-    cell_11 = image[divide_size*2:divide_size*3, divide_size*2:divide_size*3]
-    cell_12 = image[divide_size*2:divide_size*3, divide_size*3:divide_size*4]
+            start_y = cell_size * j
+            end_y = cell_size * (j + 1)
 
-    cell_13 = image[divide_size*3:divide_size*4, 0:divide_size]
-    cell_14 = image[divide_size*3:divide_size*4, divide_size:divide_size*2]
-    cell_15 = image[divide_size*3:divide_size*4, divide_size*2:divide_size*3]
-    cell_16 = image[divide_size*3:divide_size*4, divide_size*3:divide_size*4]
+            cell = image[start_x:end_x, start_y:end_y]
+            cells.append(cell)
 
-    return(
-        [
-            cell_1, cell_2, cell_3, cell_4,
-            cell_5, cell_6, cell_7, cell_8,
-            cell_9, cell_10, cell_11, cell_12,
-            cell_13, cell_14, cell_15, cell_16,
-        ]
-    )
+    return cells
 
 # Find errors
 def update_errors():
