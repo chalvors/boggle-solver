@@ -3,7 +3,7 @@ sys.path.insert(1, '../')
 import detect
 import cv2
 
-image = cv2.imread(r'./boggle_1.jpg')
+image = cv2.imread(r'./images/boggle_3.jpg')
 
 processedImage = detect.preprocess_image(image)
 cells = detect.divide_image(processedImage)

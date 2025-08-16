@@ -7,6 +7,7 @@
 import cv2
 import easyocr
 import math
+import numpy as np
 
 # Make reader
 reader = easyocr.Reader(['en'])
@@ -18,21 +19,48 @@ letters = [None] * board_cell_count
 acc = [None] * board_cell_count
 errors = []
 
+# Preprocessing and edge detection
 def preprocess_image(image):
 
     print('Processing image')
 
-    # Preprocess the image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    resized = cv2.resize(gray, (800,800))
 
-    # Crop out border
-    resized_height, resized_width = resized.shape
-    crop_margin = 70
+    # Apply Sobel operator
+    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)  # Horizontal edges
+    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)  # Vertical edges
+    
+    # Compute gradient magnitude
+    gradient_magnitude = cv2.magnitude(sobelx, sobely)
+    
+    # Convert to uint8
+    gradient_magnitude = cv2.convertScaleAbs(gradient_magnitude)
 
-    cropped = resized[crop_margin:resized_height-crop_margin, crop_margin:resized_width-crop_margin]
+    _, binary_edges = cv2.threshold(gradient_magnitude, 50, 255, cv2.THRESH_BINARY)
 
-    return cropped
+    # A 40x40 square kernel
+    kernel = np.ones((40, 40), np.uint8)
+
+    # Perform the closing operation
+    closed_edges = cv2.morphologyEx(binary_edges, cv2.MORPH_CLOSE, kernel)
+
+    contours, _ = cv2.findContours(closed_edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    largest_contour = max(contours, key=cv2.contourArea)
+
+    # Get bounding box
+    x, y, w, h = cv2.boundingRect(largest_contour)
+
+    # Crop the image based on the bounding box
+    cropped_image = gray[y:y+h, x:x+w]
+
+    # Resize and crop out margin
+    image_size = 800
+    margin = 75
+    resized = cv2.resize(cropped_image, (image_size, image_size))
+    no_margin = resized[margin:image_size-margin, margin:image_size-margin]
+
+    return no_margin
 
 # Divide image into cells
 def divide_image(image):
