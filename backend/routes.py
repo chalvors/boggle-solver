@@ -2,26 +2,25 @@ from app import app
 from flask import request, jsonify
 import cv2
 import numpy as np
+
 import detect
 import solve
 
-# detect board
-# input: image
-# return: board matrix
+# Detect board: image -> board matrix
 @app.route('/api/detect', methods=['PUT'])
 def detect_board():
 
     try:
 
-        # pull image out of request
+        # Pull image out of request
         file = request.files['image']
         file_bytes = np.fromfile(file, np.uint8)
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-        # detect board
-        board = detect.detect_letters(image)
-        board_size = len(board)
-        detect.print_board(board, board_size)
+        # Detect board
+        detector = detect.Detect()
+        board = detector.detect_letters(image)
+        detector.print_board(board)
 
         return jsonify({"board": board})
     
@@ -29,9 +28,7 @@ def detect_board():
         return jsonify(str(e))
     
 
-# solve board
-# input: board matrix
-# return: words array
+# Solve board: board matrix -> words array
 @app.route('/api/solve', methods=['PUT'])
 def solve_board():
 
