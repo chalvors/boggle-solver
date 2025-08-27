@@ -1,11 +1,7 @@
 ################################################
 # Cole Halvorson
-# CS455 Final Project
-# 11/22/2024
-#
 # solve.py
 # solve a given boggle board
-#
 # Credit: 
 # - Geeks For Geeks Boggle Solver Tutorial
 # - Github user benjamincrom word list
