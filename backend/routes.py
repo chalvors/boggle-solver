@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 from detect import Detect
-import solve
+from solve import Solve
 
 # Detect board: image -> board matrix
 @app.route('/api/detect', methods=['PUT'])
@@ -37,6 +37,7 @@ def solve_board():
         board = request.json
         board_size = len(board)
 
+        solve = Solve('./valid_words.json')
         words = solve.find_words(board, board_size)
 
         return jsonify({"words": words})
