@@ -3,7 +3,7 @@ from flask import request, jsonify
 import cv2
 import numpy as np
 
-import detect
+from detect import Detect
 import solve
 
 # Detect board: image -> board matrix
@@ -18,9 +18,9 @@ def detect_board():
         image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
         # Detect board
-        detector = detect.Detect()
-        board = detector.detect_letters(image)
-        detector.print_board(board)
+        detect = Detect()
+        board = detect.detect_letters(image)
+        detect.print_board(board)
 
         return jsonify({"board": board})
     
