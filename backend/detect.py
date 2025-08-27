@@ -27,11 +27,11 @@ def preprocess_image(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Apply Sobel operator
-    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)  # Horizontal edges
-    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)  # Vertical edges
+    sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)  # Horizontal edges
+    sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)  # Vertical edges
     
     # Compute gradient magnitude
-    gradient_magnitude = cv2.magnitude(sobelx, sobely)
+    gradient_magnitude = cv2.magnitude(sobel_x, sobel_y)
     
     # Convert to uint8
     gradient_magnitude = cv2.convertScaleAbs(gradient_magnitude)
