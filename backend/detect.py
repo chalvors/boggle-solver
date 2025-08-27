@@ -56,7 +56,7 @@ class Detect:
 
         # Resize and crop out margin
         image_size = 800
-        margin = 75
+        margin = int(image_size * 0.1) # margin of 10%
         resized = cv2.resize(cropped_image, (image_size, image_size))
         no_margin = resized[margin:image_size-margin, margin:image_size-margin]
 
