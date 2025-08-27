@@ -5,7 +5,9 @@ import cv2
 
 
 image = cv2.imread(r'./images/boggle_3.jpg')
-processedImage = detect.preprocess_image(image)
+
+detector = detect.Detect()
+processedImage = detector.preprocess_image(image)
 
 cv2.imshow("input", image)
 cv2.imshow("result", processedImage)

@@ -5,8 +5,9 @@ import cv2
 
 image = cv2.imread(r'./images/boggle_3.jpg')
 
-processedImage = detect.preprocess_image(image)
-cells = detect.divide_image(processedImage)
+detector = detect.Detect()
+processedImage = detector.preprocess_image(image)
+cells = detector.divide_image(processedImage)
 
 for cell in cells:
     cv2.imshow("cell", cell)

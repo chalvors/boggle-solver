@@ -20,7 +20,7 @@ class Detect:
 
 
     # Edge detection and preprocessing
-    def __preprocess_image(self, image):
+    def preprocess_image(self, image):
 
         print('Processing image')
 
@@ -64,7 +64,7 @@ class Detect:
     
 
     # Divide image into cells
-    def __divide_image(self, image):
+    def divide_image(self, image):
 
         print('Dividing image')
 
@@ -215,10 +215,10 @@ class Detect:
         print('')
 
         # Process image
-        processed_image = self.__preprocess_image(image)
+        processed_image = self.preprocess_image(image)
 
         # Divide image into cells
-        self.cells = self.__divide_image(processed_image)
+        self.cells = self.divide_image(processed_image)
 
         # Read cells
         self.__read_cells()
