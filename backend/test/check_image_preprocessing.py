@@ -1,13 +1,13 @@
 import sys
 sys.path.insert(1, '../')
-import detect
+from detect import Detect
 import cv2
 
 
 image = cv2.imread(r'./images/boggle_3.jpg')
 
-detector = detect.Detect()
-processedImage = detector.preprocess_image(image)
+detect = Detect()
+processedImage = detect.preprocess_image(image)
 
 cv2.imshow("input", image)
 cv2.imshow("result", processedImage)
