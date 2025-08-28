@@ -69,11 +69,13 @@ class Solve:
                 self.__find_words_util(board, board_size, visited, i, j, Str)
 
 
+        # Remove duplicates
         no_dupes = list(set(self.found))
-        no_dupes.sort(key=len, reverse=True) 
+        # Sort by alphabetical order, then by descending length
+        sorted = no_dupes.sort(key=lambda word: (-len(word), word))
 
-        num_words = str(len(no_dupes))
+        num_words = str(len(sorted))
         print('Found ' + num_words + ' words')
         print('')
 
-        return no_dupes
+        return sorted
