@@ -207,7 +207,6 @@ class Detect:
 
         print('')
         print('Detected ' + str(size) + 'x' + str(size) + ' board:')
-        print('')
         
         for row in board:
             print(row)
