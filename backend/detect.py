@@ -13,10 +13,9 @@ class Detect:
      
     def __init__(self):
         self.board_cell_count = 16
-        self.cells = [None] * self.board_cell_count
+        self.cell_images = []
         self.reader = easyocr.Reader(['en'])
-        self.letters = [None] * self.board_cell_count
-        self.acc = [None] * self.board_cell_count
+        self.letters = []
 
 
     # Edge detection and preprocessing
@@ -89,73 +88,82 @@ class Detect:
                 cells.append(cell)
 
         return cells
-    
-
-    # Find errors
-    def __update_errors(self):
-
-        self.errors = []
-
-        for index, num in enumerate(self.acc):
-
-            # Add cell to errors if accuracy is less than 90%
-            if (num < 0.90):
-                self.errors.append(index + 1)
 
         
     # Read letters from cells 
     def __read_cells(self):
-        output = []
 
-        for img in self.cells:
-            letter = self.reader.readtext(img)
-            output.append(letter)
+        cell_image_sets = []  # 2d array of rotated cell images
+        ocr_output_sets = []  # 2d array of ocr outputs for rotated cell images
 
-        for index, entry in enumerate(output):
+        # Store each rotated image for each cell
+        for cell_image in self.cell_images:
 
-            if(entry):
-                self.letters[index] = entry[0][1]
-                self.acc[index] = float(entry[0][2])
-                
-            else:
-                self.letters[index] = ''
-                self.acc[index] = 0
+            cell_rotations = []
+
+            cell_image_rotated_90 = cv2.rotate(cell_image, cv2.ROTATE_90_CLOCKWISE)
+            cell_image_rotated_180 = cv2.rotate(cell_image, cv2.ROTATE_180)
+            cell_image_rotated_270 = cv2.rotate(cell_image, cv2.ROTATE_90_COUNTERCLOCKWISE)  # 90 degrees counterclockwise = 270 degrees clockwise
+
+            cell_rotations.append(cell_image)
+            cell_rotations.append(cell_image_rotated_90)
+            cell_rotations.append(cell_image_rotated_180)
+            cell_rotations.append(cell_image_rotated_270)
+
+            cell_image_sets.append(cell_rotations)
         
-        self.__update_errors()
 
+        # Read each rotated image and store the ocr output
+        for image_set in cell_image_sets:
 
-    # Rotate error cells for future reading
-    def __rotate_error_cells(self):
+            cell_ocr_outputs = []
 
-        print('Rotating cells: ' + str(self.errors))
+            for image in image_set:
 
-        for index, cell in enumerate(self.cells):
-            for error in self.errors:
+                ocr_output = self.reader.readtext(image, allowlist='0123456789ABCDEFGHJKLMNOPQRSTUVWXYZ')  # only allow numbers and uppercase letters
 
-                # if cell is an error cell
-                if (index == error-1):
+                if(ocr_output):
+                    letter = ocr_output[0][1]
+                    confidence = float(ocr_output[0][2])
                     
-                    # Rotate 90 clockwise
-                    new_cell = cv2.rotate(cell, cv2.ROTATE_90_CLOCKWISE)
-
                 else:
-                    new_cell = self.cells[index]
+                    letter = '?'
+                    confidence = 0
 
-                self.cells[index] = new_cell
+                cell_ocr_outputs.append((letter, confidence))
 
+            ocr_output_sets.append(cell_ocr_outputs)
+        
 
-    # Replace remaining errors
-    def __replace_errors(self): 
+        # Remove ocr results where one cell contains multiple chars
+        for cell_ocr_outputs in ocr_output_sets:
+            
+            for ocr_output in cell_ocr_outputs:
+
+                letter = ocr_output[0]
+
+                if (len(letter) > 1):
+                    cell_ocr_outputs.remove(ocr_output)
+
+        
+        for cell_ocr_outputs in ocr_output_sets:
+    
+            # Pick the ocr output that has the highest confidence value for each cell
+            highest_confidence_ocr_output = max(cell_ocr_outputs, key=lambda c: c[1])
+
+            letter = highest_confidence_ocr_output[0]
+            self.letters.append(letter)
+              
+
+    # Replace numbers with logical letters
+    def __replace_numbers(self): 
 
         print('')
-        print('Replacing errors on cells: ' + str(self.errors))
-
+        print('Replacing numbers')
 
         for index, letter in enumerate(self.letters):
 
-            if letter == '':
-                self.letters[index] = '?'
-            elif letter == '0':
+            if letter == '0':
                 self.letters[index] = 'O'
             elif letter == '1':
                 self.letters[index] = 'I'
@@ -217,20 +225,14 @@ class Detect:
         # Process image
         processed_image = self.preprocess_image(image)
 
-        # Divide image into cells
-        self.cells = self.divide_image(processed_image)
+        # Divide image into individual cells
+        self.cell_images = self.divide_image(processed_image)
 
         # Read cells
         self.__read_cells()
 
-         # Rotate and read error cells 3 times
-        for i in range(3):
-
-            self.__rotate_error_cells()
-            self.__read_cells()
-
-        # Replace error cells
-        self.__replace_errors()
+        # Replace any numbers
+        self.__replace_numbers()
 
         # Create and return board
         board = self.__create_board()
