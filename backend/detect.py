@@ -158,7 +158,6 @@ class Detect:
     # Replace numbers with logical letters
     def __replace_numbers(self): 
 
-        print('')
         print('Replacing numbers')
 
         for index, letter in enumerate(self.letters):
