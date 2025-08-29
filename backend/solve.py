@@ -71,11 +71,12 @@ class Solve:
 
         # Remove duplicates
         no_dupes = list(set(self.found))
-        # Sort by alphabetical order, then by descending length
-        sorted = no_dupes.sort(key=lambda word: (-len(word), word))
 
-        num_words = str(len(sorted))
+        # Sort by alphabetical order, then by descending length
+        no_dupes.sort(key=lambda word: (-len(word), word))
+
+        num_words = str(len(no_dupes))
         print('Found ' + num_words + ' words')
         print('')
 
-        return sorted
+        return no_dupes
